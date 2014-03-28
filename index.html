@@ -64,7 +64,7 @@ Started the 26 March 2014
                 game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);
                 countdownString = 'Countdown : ';
                 countdownText = game.add.text(100, 100, countdownString + countdownDisplay, {fontSize: '34px', fill: '#fff'});
-                
+
                 //  Our bullet group
                 bullets = game.add.group();
                 bullets.enableBody = true;
@@ -105,17 +105,30 @@ Started the 26 March 2014
                 // Enemies Test and actions
                 for (var i = 0; i < enemies.length; i++)
                 {
+
                     if (enemies[i].alive)
                     {
+
                         enemies[i].update();
+
                     } else {
+
                         if (enemies[i].bomber.name === '0') {
-                            var randomGenerateBomber0 = game.rnd.integerInRange(1, 10000);
-                            if (randomGenerateBomber0 > 8888) {
+                            var randomGenerateBomber0 = game.rnd.integerInRange(1, 100000);
+                            if (randomGenerateBomber0 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 0);
                             }
                         }
+
+                        if (enemies[i].bomber.name === '1' && countdownDisplay < 45) {
+                            var randomGenerateBomber1 = game.rnd.integerInRange(1, 100000);
+                            if (randomGenerateBomber1 > 88888) {
+                                enemies[i] = new EnemyBomber(game, 1);
+                            }
+                        }
+
                     }
+
                 }
 
 
