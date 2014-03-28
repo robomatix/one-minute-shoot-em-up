@@ -18,6 +18,15 @@ Started the 26 March 2014
         </style>
         <script type="text/javascript">
 
+            /******************************
+             * 
+             * VARIABLES
+             *******************************/
+
+            // var countdown
+            var countdownDisplay = 60;
+            var countdownString = '';
+            var countdownText;
             // var Hero
             var player;
             var playerMove = 180;
@@ -29,6 +38,7 @@ Started the 26 March 2014
             var bomberMove = 75;
             var bomber1;
             var bomber2;
+
 
 
             /******************************
@@ -50,6 +60,11 @@ Started the 26 March 2014
 
             function create() {
 
+                // The countdown
+                game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);
+                countdownString = 'Countdown : ';
+                countdownText = game.add.text(100, 100, countdownString + countdownDisplay, {fontSize: '34px', fill: '#fff'});
+                
                 //  Our bullet group
                 bullets = game.add.group();
                 bullets.enableBody = true;
@@ -134,6 +149,17 @@ Started the 26 March 2014
 
 
             }// update
+
+            /******************************
+             * 
+             * THE GAME'S FUNCTIONS
+             *******************************/
+
+            function countDown() {
+                countdownDisplay -= 1;
+                countdownText.setText(countdownString + countdownDisplay);
+
+            }
 
             /******************************
              * 
