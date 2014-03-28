@@ -18,6 +18,7 @@ Started the 26 March 2014
         </style>
         <script type="text/javascript">
 
+           
             /******************************
              * 
              * THE GAME
@@ -29,6 +30,9 @@ Started the 26 March 2014
                 game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
                 game.load.image('bullet', 'assets/picts/bullet-hero-1.png');
 
+                game.load.spritesheet('bomber', 'assets/pics/enemy-bomber-1.png', 60, 40, 3);
+                game.load.spritesheet('bomberExplode', 'assets/pics/enemy-bomber-1-explode.png', 60, 40, 4);
+
             }// preload
 
             // var Hero
@@ -37,6 +41,11 @@ Started the 26 March 2014
             var bullets;
             var bulletTime = 0;
             var fireButton;
+            // var Enemies
+            var enemies;
+            var bomberMove = 75;
+            var bomber1;
+            var bomber2;
 
             function create() {
 
@@ -45,6 +54,7 @@ Started the 26 March 2014
                 bullets.enableBody = true;
                 bullets.physicsBodyType = Phaser.Physics.ARCADE;
                 bullets.createMultiple(30, 'bullet');
+                bullets.setAll('checkWorldBounds', true);
                 bullets.setAll('outOfBoundsKill', true);
 
 
@@ -57,6 +67,20 @@ Started the 26 March 2014
                 //  And some controls to play the game with
                 cursors = game.input.keyboard.createCursorKeys();
                 fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+                //  Create some baddies to have fun with :)
+                enemies = [];
+
+                // Create Bombers
+                for (var i = 0; i < 2; i++)
+                {
+                    enemies.push(new EnemyBomber(game, i));
+                    game.physics.arcade.enable(enemies[i]);
+                }
+
+                // Apparently the second bomber (1) must be created and destroyed in order to get it work with the countdown
+                enemies[1].alive = false;
+                enemies[1].bomber.kill();
 
 
             }// create
@@ -114,10 +138,7 @@ Started the 26 March 2014
                     }
                 }
 
-            }
-
-
-
+            }//fireBullet
 
         </script>
     </head>
