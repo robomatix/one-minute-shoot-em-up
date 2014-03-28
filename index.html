@@ -108,7 +108,7 @@ Started the 26 March 2014
 
                     if (enemies[i].alive)
                     {
-
+                        game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
                         enemies[i].update();
 
                     } else {
@@ -197,6 +197,15 @@ Started the 26 March 2014
 
             }//fireBullet
 
+            function bulletHitEnemy(enemy, bullet) {
+
+                bullet.kill();
+                enemies[enemy.name].hitted();
+
+
+
+            }// bulletHitEnemy
+
             /******************************
              * 
              * THE ENEMIES'S FUNCTIONS
@@ -253,6 +262,15 @@ Started the 26 March 2014
                     this.alive = false;
                     this.bomber.kill();
                 }
+            };
+
+            EnemyBomber.prototype.hitted = function() {
+
+                this.bomber.loadTexture('bomberExplode', 0);
+                this.bomber.animations.add('explode');
+                this.bomber.animations.play('explode', 9, false, true);
+                this.alive = false;
+
             };
         </script>
     </head>
