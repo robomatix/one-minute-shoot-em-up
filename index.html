@@ -40,8 +40,7 @@ Started the 26 March 2014
             // var Enemies
             var enemies;
             var bomberMove = 75;
-            var bomber1;
-            var bomber2;
+            var trackerMove = 200;
 
 
 
@@ -58,7 +57,7 @@ Started the 26 March 2014
 
                 game.load.spritesheet('bomber', 'assets/picts/enemy-bomber-1.png', 60, 40, 3);
                 game.load.spritesheet('bomberExplode', 'assets/picts/enemy-bomber-1-explode.png', 60, 40, 4);
-                
+
                 game.load.spritesheet('tracker', 'assets/picts/enemy-tracker-1-and-explode.png', 40, 36, 5);
 
             }// preload
@@ -94,14 +93,21 @@ Started the 26 March 2014
                 enemies = [];
 
                 // Create Bombers
-                for (var i = 0; i < 2; i++)
+                for (var i = 0; i < 3; i++)
                 {
-                    enemies.push(new EnemyBomber(game, i));
+                    if (i < 2) {
+                        enemies.push(new EnemyBomber(game, i));
+                    }
+                    if (i === 2) {
+                        enemies.push(new EnemyTracker(game, i));
+                    }
                 }
 
-                // Apparently the second bomber (1) must be created and destroyed in order to get it work with the countdown
+                // Apparently the second bomber (1) and the tracker must be created and destroyed in order to get it work with the countdown
                 enemies[1].alive = false;
                 enemies[1].bomber.kill();
+                enemies[2].alive = false;
+                enemies[2].tracker.kill();
 
                 //  The score
                 scoreText = game.add.text(10, 10, scoreString + score, {fontSize: '34px', fill: '#fff'});
@@ -117,24 +123,38 @@ Started the 26 March 2014
 
                     if (enemies[i].alive)
                     {
-                        game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
+                        game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitBomber, null, this);
+                        game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitBomber, null, this);
                         enemies[i].update();
 
                     } else {
 
-                        if (enemies[i].bomber.name === '0') {
+                        if (i === 0) {
                             var randomGenerateBomber0 = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateBomber0 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 0);
                             }
                         }
 
-                        if (enemies[i].bomber.name === '1' && countdownDisplay < 45) {
+                        if (i === 1 && countdownDisplay < 45) {
                             var randomGenerateBomber1 = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateBomber1 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 1);
                             }
                         }
+
+                        if (i === 2 && countdownDisplay < 30) {
+                            var randomGenerateTracker = game.rnd.integerInRange(1, 100000);
+                            if (randomGenerateTracker > 88888) {
+                                enemies[i] = new EnemyTracker(game, 2);
+                            }
+                        }
+
+
+
+
+
+
 
                     }
 
@@ -206,7 +226,7 @@ Started the 26 March 2014
 
             }//fireBullet
 
-            function bulletHitEnemy(enemy, bullet) {
+            function bulletHitBomber(enemy, bullet) {
 
                 bullet.kill();
                 enemies[enemy.name].hitted();
@@ -229,8 +249,6 @@ Started the 26 March 2014
 
                 this.game = game;
 
-
-
                 // Determinate if the bomber appear on the Left or on the Right
                 lr = this.game.rnd.integerInRange(1, 100);
 
@@ -248,11 +266,8 @@ Started the 26 March 2014
                     this.moveX = -bomberMove;
                 }
 
-
                 this.health = 1;
                 this.alive = true;
-
-
 
                 this.bomber = game.add.sprite(x, y, 'bomber');
                 this.game.physics.arcade.enable(this.bomber);
@@ -278,10 +293,69 @@ Started the 26 March 2014
                 this.bomber.loadTexture('bomberExplode', 0);
                 this.bomber.animations.add('explode');
                 this.bomber.animations.play('explode', 9, false, true);
+                
                 this.alive = false;
+                
                 score += 10;
 
             };
+            // TRACKER
+            EnemyTracker = function(game, id) {
+
+                // var
+                var lr;
+                var y;
+
+                this.game = game;
+
+                // Determinate if the tracker appear on the Left or on the Right
+                lr = this.game.rnd.integerInRange(1, 100);
+
+                // The starting position of the tracker and consquently his moving direction
+                y = 125;
+                if (lr > 50) {
+                    var x = -60;
+                    this.moveX = trackerMove;
+                } else {
+                    var x = 560;
+                    this.moveX = -trackerMove;
+                }
+
+                this.health = 1;
+                this.alive = true;
+
+                this.tracker = game.add.sprite(x, y, 'tracker');
+                this.game.physics.arcade.enable(this.tracker);
+                this.tracker.name = id.toString();
+
+            };
+
+            EnemyTracker.prototype.update = function() {
+
+                var posX = this.tracker.x;
+
+                // Moves the tracker             
+                if (posX < 5) {
+                    this.moveX = trackerMove;
+                }
+                if (posX > 455) {
+                    this.moveX = -trackerMove;
+                }
+                this.tracker.body.velocity.x = this.moveX;
+
+            };
+
+            EnemyTracker.prototype.hitted = function() {
+                
+                this.tracker.animations.add('explode');
+                this.tracker.animations.play('explode', 9, false, true);
+                
+                this.alive = false;
+                
+                score += 30;
+
+            };
+
         </script>
     </head>
     <body>
