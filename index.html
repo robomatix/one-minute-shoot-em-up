@@ -17,11 +17,17 @@ Started the 26 March 2014
             }
         </style>
         <script type="text/javascript">
+
+            /******************************
+             * 
+             * THE GAME
+             *******************************/
             var game = new Phaser.Game(500, 500, Phaser.AUTO, '', {preload: preload, create: create, update: update});
 
             function preload() {
 
                 game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
+                game.load.image('bullet', 'assets/picts/bullet-hero-1.png');
 
             }// preload
 
@@ -33,6 +39,14 @@ Started the 26 March 2014
             var fireButton;
 
             function create() {
+
+                //  Our bullet group
+                bullets = game.add.group();
+                bullets.enableBody = true;
+                bullets.physicsBodyType = Phaser.Physics.ARCADE;
+                bullets.createMultiple(30, 'bullet');
+                bullets.setAll('outOfBoundsKill', true);
+
 
                 //  The hero!
                 player = game.add.sprite(230, 455, 'hero');
@@ -70,7 +84,41 @@ Started the 26 March 2014
                     }
                 }
 
+                //  Firing?
+                if (fireButton.isDown)
+                {
+                    fireBullet();
+                }
+
+
             }// update
+
+            /******************************
+             * 
+             * THE PLAYER'S FUNCTIONS
+             *******************************/
+            function fireBullet() {
+
+                //  To avoid them being allowed to fire too fast we set a time limit
+                if (game.time.now > bulletTime)
+                {
+                    //  Grab the first bullet we can from the pool
+                    bullet = bullets.getFirstExists(false);
+
+                    if (bullet)
+                    {
+                        //  And fire it
+                        bullet.reset(player.x + 17, player.y + 8);
+                        bullet.body.velocity.y = -400;
+                        bulletTime = game.time.now + 444;
+                    }
+                }
+
+            }
+
+
+
+
         </script>
     </head>
     <body>
