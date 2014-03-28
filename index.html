@@ -18,23 +18,6 @@ Started the 26 March 2014
         </style>
         <script type="text/javascript">
 
-           
-            /******************************
-             * 
-             * THE GAME
-             *******************************/
-            var game = new Phaser.Game(500, 500, Phaser.AUTO, '', {preload: preload, create: create, update: update});
-
-            function preload() {
-
-                game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
-                game.load.image('bullet', 'assets/picts/bullet-hero-1.png');
-
-                game.load.spritesheet('bomber', 'assets/pics/enemy-bomber-1.png', 60, 40, 3);
-                game.load.spritesheet('bomberExplode', 'assets/pics/enemy-bomber-1-explode.png', 60, 40, 4);
-
-            }// preload
-
             // var Hero
             var player;
             var playerMove = 180;
@@ -46,6 +29,78 @@ Started the 26 March 2014
             var bomberMove = 75;
             var bomber1;
             var bomber2;
+
+            // BOMBER
+            EnemyBomber = function(game, id) {
+
+                // var
+                var lr;
+                var y;
+
+                this.game = game;
+                
+                
+
+                // Determinate if the bomber appear on the Left or on the Right
+                lr = this.game.rnd.integerInRange(1, 100);
+
+                // The starting position of the bomber and consquently his moving direction
+                if (id === 0) {
+                    y = 25;
+                } else {
+                    y = 75;
+                }
+                if (lr > 50) {
+                    var x = -60;
+                    this.moveX = bomberMove;
+                } else {
+                    var x = 560;
+                    this.moveX = -bomberMove;
+                }
+
+
+                this.health = 1;
+                this.alive = true;
+
+
+
+                this.bomber = game.add.sprite(x, y, 'bomber');
+                this.game.physics.arcade.enable(this.bomber);
+                this.bomber.animations.add('blink');
+                this.bomber.animations.play('blink', 3, true);
+                this.bomber.name = id.toString();
+
+            };
+
+            EnemyBomber.prototype.update = function() {
+
+                //  Reset the bomber velocity (movement)
+                this.bomber.body.velocity.x = 0;
+                // Moves the bomber
+                this.bomber.body.velocity.x = this.moveX;
+
+                if (this.bomber.x < -60 || this.bomber.x > 560) {
+                    this.alive = false;
+                    this.bomber.kill();
+                }
+            };
+
+            /******************************
+             * 
+             * THE GAME
+             *******************************/
+            var game = new Phaser.Game(500, 500, Phaser.AUTO, '', {preload: preload, create: create, update: update});
+
+            function preload() {
+
+                game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
+                game.load.image('bullet', 'assets/picts/bullet-hero-1.png');
+
+                game.load.spritesheet('bomber', 'assets/picts/enemy-bomber-1.png', 60, 40, 3);
+                game.load.spritesheet('bomberExplode', 'assets/picts/enemy-bomber-1-explode.png', 60, 40, 4);
+
+            }// preload
+
 
             function create() {
 
@@ -75,7 +130,6 @@ Started the 26 March 2014
                 for (var i = 0; i < 2; i++)
                 {
                     enemies.push(new EnemyBomber(game, i));
-                    game.physics.arcade.enable(enemies[i]);
                 }
 
                 // Apparently the second bomber (1) must be created and destroyed in order to get it work with the countdown
@@ -86,6 +140,24 @@ Started the 26 March 2014
             }// create
 
             function update() {
+
+                // Enemies Test and actions
+                for (var i = 0; i < enemies.length; i++)
+                {
+                    if (enemies[i].alive)
+                    {
+                        enemies[i].update();
+                    } else {
+                        if (enemies[i].bomber.name === '0') {
+                            var randomGenerateBomber0 = game.rnd.integerInRange(1, 10000);
+                            if (randomGenerateBomber0 > 8888) {
+                                enemies[i] = new EnemyBomber(game, 0);
+                            }
+                        }
+                    }
+                }
+
+
 
                 //  Reset the player velocity (movement)
                 player.body.velocity.x = 0;
