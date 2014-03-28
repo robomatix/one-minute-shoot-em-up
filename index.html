@@ -27,6 +27,10 @@ Started the 26 March 2014
             var countdownDisplay = 60;
             var countdownString = '';
             var countdownText;
+            // var info jeu
+            var score = 0;
+            var scoreString = 'Score : ';
+            var scoreText;
             // var Hero
             var player;
             var playerMove = 180;
@@ -97,6 +101,9 @@ Started the 26 March 2014
                 enemies[1].alive = false;
                 enemies[1].bomber.kill();
 
+                //  The score
+                scoreText = game.add.text(10, 10, scoreString + score, {fontSize: '34px', fill: '#fff'});
+
 
             }// create
 
@@ -160,7 +167,7 @@ Started the 26 March 2014
                     fireBullet();
                 }
 
-
+                scoreText.setText(scoreString + score);
             }// update
 
             /******************************
@@ -270,6 +277,7 @@ Started the 26 March 2014
                 this.bomber.animations.add('explode');
                 this.bomber.animations.play('explode', 9, false, true);
                 this.alive = false;
+                score += 10;
 
             };
         </script>
