@@ -30,60 +30,6 @@ Started the 26 March 2014
             var bomber1;
             var bomber2;
 
-            // BOMBER
-            EnemyBomber = function(game, id) {
-
-                // var
-                var lr;
-                var y;
-
-                this.game = game;
-                
-                
-
-                // Determinate if the bomber appear on the Left or on the Right
-                lr = this.game.rnd.integerInRange(1, 100);
-
-                // The starting position of the bomber and consquently his moving direction
-                if (id === 0) {
-                    y = 25;
-                } else {
-                    y = 75;
-                }
-                if (lr > 50) {
-                    var x = -60;
-                    this.moveX = bomberMove;
-                } else {
-                    var x = 560;
-                    this.moveX = -bomberMove;
-                }
-
-
-                this.health = 1;
-                this.alive = true;
-
-
-
-                this.bomber = game.add.sprite(x, y, 'bomber');
-                this.game.physics.arcade.enable(this.bomber);
-                this.bomber.animations.add('blink');
-                this.bomber.animations.play('blink', 3, true);
-                this.bomber.name = id.toString();
-
-            };
-
-            EnemyBomber.prototype.update = function() {
-
-                //  Reset the bomber velocity (movement)
-                this.bomber.body.velocity.x = 0;
-                // Moves the bomber
-                this.bomber.body.velocity.x = this.moveX;
-
-                if (this.bomber.x < -60 || this.bomber.x > 560) {
-                    this.alive = false;
-                    this.bomber.kill();
-                }
-            };
 
             /******************************
              * 
@@ -212,6 +158,63 @@ Started the 26 March 2014
 
             }//fireBullet
 
+            /******************************
+             * 
+             * THE ENEMIES'S FUNCTIONS
+             *******************************/
+
+            // BOMBER
+            EnemyBomber = function(game, id) {
+
+                // var
+                var lr;
+                var y;
+
+                this.game = game;
+
+
+
+                // Determinate if the bomber appear on the Left or on the Right
+                lr = this.game.rnd.integerInRange(1, 100);
+
+                // The starting position of the bomber and consquently his moving direction
+                if (id === 0) {
+                    y = 25;
+                } else {
+                    y = 75;
+                }
+                if (lr > 50) {
+                    var x = -60;
+                    this.moveX = bomberMove;
+                } else {
+                    var x = 560;
+                    this.moveX = -bomberMove;
+                }
+
+
+                this.health = 1;
+                this.alive = true;
+
+
+
+                this.bomber = game.add.sprite(x, y, 'bomber');
+                this.game.physics.arcade.enable(this.bomber);
+                this.bomber.animations.add('blink');
+                this.bomber.animations.play('blink', 3, true);
+                this.bomber.name = id.toString();
+
+            };
+
+            EnemyBomber.prototype.update = function() {
+
+                // Moves the bomber
+                this.bomber.body.velocity.x = this.moveX;
+
+                if (this.bomber.x < -60 || this.bomber.x > 560) {
+                    this.alive = false;
+                    this.bomber.kill();
+                }
+            };
         </script>
     </head>
     <body>
