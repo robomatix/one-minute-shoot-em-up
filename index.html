@@ -16,6 +16,62 @@ Started the 26 March 2014
                 margin: 0;
             }
         </style>
+        <script type="text/javascript">
+            var game = new Phaser.Game(500, 500, Phaser.AUTO, '', {preload: preload, create: create, update: update});
+
+            function preload() {
+
+                game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
+
+            }// preload
+
+            // var Hero
+            var player;
+            var playerMove = 180;
+            var bullets;
+            var bulletTime = 0;
+            var fireButton;
+
+            function create() {
+
+                //  The hero!
+                player = game.add.sprite(230, 455, 'hero');
+
+                //  We need to enable physics on the player
+                game.physics.arcade.enable(player);
+
+                //  And some controls to play the game with
+                cursors = game.input.keyboard.createCursorKeys();
+                fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+
+            }// create
+
+            function update() {
+
+                //  Reset the player velocity (movement)
+                player.body.velocity.x = 0;
+
+                //  Move the player
+                if (cursors.left.isDown)
+                {
+                    if (player.x > 10) {
+                        player.body.velocity.x = -playerMove;
+                    } else {
+                        player.body.velocity.x = 0;
+                    }
+                }
+                else if (cursors.right.isDown)
+                {
+                    if (player.x < 450) {
+                        player.body.velocity.x = playerMove;
+                    } else {
+                        player.body.velocity.x = 0;
+                    }
+                }
+
+            }// update
+        </script>
     </head>
     <body>
 
