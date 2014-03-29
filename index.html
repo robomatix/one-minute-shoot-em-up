@@ -187,16 +187,18 @@ Started the 26 March 2014
             hero = function(game) {
 
                 // var
-                var x = 230;
-                var y = 455;
+                var startX = 230;
+                var startY = 455;
 
                 this.game = game;
 
                 this.health = 6;
                 this.alive = true;
 
-                this.hero = game.add.sprite(230, 455, 'hero');
+                this.hero = game.add.sprite(startX, startY, 'hero');
                 game.physics.arcade.enable(this.hero);
+                
+                this.x = this.hero.x;
 
             };
 
@@ -240,7 +242,7 @@ Started the 26 March 2014
                     }
                 }
 
-            }//fireBullet
+            };//fireBullet
 
             function bulletHitEnemy(enemy, bullet) {
 
@@ -400,8 +402,7 @@ Started the 26 March 2014
                     score += 30;
                 }
 
-            }
-            ;
+            };
 
             function trackerHitHero() {
                 enemies[2].hitted('hero');
