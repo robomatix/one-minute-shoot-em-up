@@ -41,7 +41,7 @@ Started the 26 March 2014
             var enemies;
             var bomberMove = 75;
             var trackerMoveX = 200;
-            var trackerMoveY = 1200;
+            var trackerMoveY = 500;//1200;
 
 
 
@@ -82,10 +82,7 @@ Started the 26 March 2014
 
 
                 //  The hero!
-                player = game.add.sprite(230, 455, 'hero');
-
-                //  We need to enable physics on the player
-                game.physics.arcade.enable(player);
+                player = new hero(game);
 
                 //  And some controls to play the game with
                 cursors = game.input.keyboard.createCursorKeys();
@@ -127,6 +124,7 @@ Started the 26 March 2014
                     {
                         game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
+                        game.physics.arcade.overlap(player, enemies[i].tracker, trackerHitHero, null, this);
                         enemies[i].update();
 
                     } else {
@@ -158,27 +156,8 @@ Started the 26 March 2014
                 }
 
 
-
-                //  Reset the player velocity (movement)
-                player.body.velocity.x = 0;
-
-                //  Move the player
-                if (cursors.left.isDown)
-                {
-                    if (player.x > 10) {
-                        player.body.velocity.x = -playerMove;
-                    } else {
-                        player.body.velocity.x = 0;
-                    }
-                }
-                else if (cursors.right.isDown)
-                {
-                    if (player.x < 450) {
-                        player.body.velocity.x = playerMove;
-                    } else {
-                        player.body.velocity.x = 0;
-                    }
-                }
+                // Moving Hero
+                player.update();
 
                 //  Firing?
                 if (fireButton.isDown)
@@ -202,8 +181,48 @@ Started the 26 March 2014
 
             /******************************
              * 
-             * THE PLAYER'S FUNCTIONS
+             * THE HERO'S FUNCTIONS
              *******************************/
+            // HERO
+            hero = function(game) {
+
+                // var
+                var x = 230;
+                var y = 455;
+
+                this.game = game;
+
+                this.health = 6;
+                this.alive = true;
+
+                this.hero = game.add.sprite(230, 455, 'hero');
+                game.physics.arcade.enable(this.hero);
+
+            };
+
+            hero.prototype.update = function() {
+                //  Reset the player velocity (movement)
+                this.hero.body.velocity.x = 0;
+
+                //  Move the player
+                if (cursors.left.isDown)
+                {
+                    if (this.hero.x > 10) {
+                        this.hero.body.velocity.x = -playerMove;
+                    } else {
+                        this.hero.body.velocity.x = 0;
+                    }
+                }
+                else if (cursors.right.isDown)
+                {
+                    if (this.hero.x < 450) {
+                        this.hero.body.velocity.x = playerMove;
+                    } else {
+                        this.hero.body.velocity.x = 0;
+                    }
+                }
+            };
+
             function fireBullet() {
 
                 //  To avoid them being allowed to fire too fast we set a time limit
@@ -227,8 +246,6 @@ Started the 26 March 2014
 
                 bullet.kill();
                 enemies[enemy.name].hitted();
-
-
 
             }// bulletHitEnemy
 
@@ -372,16 +389,23 @@ Started the 26 March 2014
 
             };
 
-            EnemyTracker.prototype.hitted = function() {
+            EnemyTracker.prototype.hitted = function(objectHitted) {
 
                 this.tracker.animations.add('explode');
                 this.tracker.animations.play('explode', 9, false, true);
 
                 this.alive = false;
 
-                score += 30;
+                if (objectHitted !== 'hero') {
+                    score += 30;
+                }
 
-            };
+            }
+            ;
+
+            function trackerHitHero() {
+                enemies[2].hitted('hero');
+            }
 
         </script>
     </head>
