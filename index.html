@@ -40,7 +40,9 @@ Started the 26 March 2014
             // var Enemies
             var enemies;
             var bomberMove = 75;
-            var trackerMove = 200;
+            var trackerMoveX = 200;
+            var trackerMoveY = 1200;
+
 
 
 
@@ -149,11 +151,6 @@ Started the 26 March 2014
                                 enemies[i] = new EnemyTracker(game, 2);
                             }
                         }
-
-
-
-
-
 
 
                     }
@@ -282,6 +279,7 @@ Started the 26 March 2014
                 // Moves the bomber
                 this.bomber.body.velocity.x = this.moveX;
 
+                // Kill bomber if out of game area
                 if (this.bomber.x < -60 || this.bomber.x > 560) {
                     this.alive = false;
                     this.bomber.kill();
@@ -293,9 +291,9 @@ Started the 26 March 2014
                 this.bomber.loadTexture('bomberExplode', 0);
                 this.bomber.animations.add('explode');
                 this.bomber.animations.play('explode', 9, false, true);
-                
+
                 this.alive = false;
-                
+
                 score += 10;
 
             };
@@ -312,13 +310,14 @@ Started the 26 March 2014
                 lr = this.game.rnd.integerInRange(1, 100);
 
                 // The starting position of the tracker and consquently his moving direction
-                y = 125;
+                var y = 125;
+                this.moveY = 0;
                 if (lr > 50) {
                     var x = -60;
-                    this.moveX = trackerMove;
+                    this.moveX = trackerMoveX;
                 } else {
                     var x = 560;
-                    this.moveX = -trackerMove;
+                    this.moveX = -trackerMoveX;
                 }
 
                 this.health = 1;
@@ -327,6 +326,7 @@ Started the 26 March 2014
                 this.tracker = game.add.sprite(x, y, 'tracker');
                 this.game.physics.arcade.enable(this.tracker);
                 this.tracker.name = id.toString();
+                this.tracker.heroDetectedByTracker = false;
 
             };
 
@@ -336,22 +336,49 @@ Started the 26 March 2014
 
                 // Moves the tracker             
                 if (posX < 5) {
-                    this.moveX = trackerMove;
+                    this.moveX = trackerMoveX;
                 }
                 if (posX > 455) {
-                    this.moveX = -trackerMove;
+                    this.moveX = -trackerMoveX;
                 }
+
+                // Detect if the hero is near below
+                if (player.x > posX - 40 && player.x < posX + 120 && !this.tracker.heroDetectedByTracker) {
+
+
+                    yTrackerGoDownFactor = this.game.rnd.integerInRange(1, 100000);
+                    if (yTrackerGoDownFactor < 2000) {// Go down
+                        this.moveX = 0;
+                        this.moveY = trackerMoveY;
+                        this.tracker.heroDetectedByTracker = true;
+                    }
+
+                }
+
+                // Moves
                 this.tracker.body.velocity.x = this.moveX;
+                if (this.tracker.heroDetectedByTracker) {
+                    this.tracker.body.velocity.y = this.moveY;
+                }
+
+
+                // Kill tracker if out of game area
+                if (this.tracker.y > 560) {
+                    this.alive = false;
+                    this.tracker.kill();
+                }
+
+
 
             };
 
             EnemyTracker.prototype.hitted = function() {
-                
+
                 this.tracker.animations.add('explode');
                 this.tracker.animations.play('explode', 9, false, true);
-                
+
                 this.alive = false;
-                
+
                 score += 30;
 
             };
