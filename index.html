@@ -43,7 +43,7 @@ Started the 26 March 2014
             var enemies;
             var bomberMove = 75;
             var trackerMoveX = 200;
-            var trackerMoveY = 500;//1200;
+            var trackerMoveY = 300;//1200;
 
 
 
@@ -126,7 +126,7 @@ Started the 26 March 2014
                     {
                         game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
-                        game.physics.arcade.overlap(player, enemies[i].tracker, trackerHitHero, null, this);
+                        game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
                         enemies[i].update();
 
                     } else {
