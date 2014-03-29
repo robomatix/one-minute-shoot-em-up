@@ -199,8 +199,9 @@ Started the 26 March 2014
 
                 this.hero = game.add.sprite(startX, startY, 'hero');
                 game.physics.arcade.enable(this.hero);
-                
+
                 this.x = this.hero.x;
+
 
             };// Hero
 
@@ -227,7 +228,7 @@ Started the 26 March 2014
                 }
             };// Hero Update
 
-                hero.prototype.fireBullet = function() {
+            hero.prototype.fireBullet = function() {
 
                 //  To avoid them being allowed to fire too fast we set a time limit
                 if (game.time.now > bulletTime)
@@ -235,7 +236,7 @@ Started the 26 March 2014
                     //  Grab the first bullet we can from the pool
                     bullet = bullets.getFirstExists(false);
 
-                    if (bullet)
+                    if (bullet && this.alive)
                     {
                         //  And fire it
                         bullet.reset(this.hero.x + 17, this.hero.y + 8);
@@ -252,6 +253,51 @@ Started the 26 March 2014
                 enemies[enemy.name].hitted();
 
             }// bulletHitEnemy
+
+            hero.prototype.hitted = function() {
+                
+                // The different states of the hero according to his health
+                this.hero.animations.add('explode1', [1, 2], 10, false);
+                this.hero.animations.add('explode2', [3, 4], 10, false);
+                this.hero.animations.add('explode3', [5, 6], 10, false);
+                this.hero.animations.add('explode4', [7, 8], 10, false);
+                this.hero.animations.add('explode5', [9, 10], 10, false);
+                this.hero.animations.add('explode6', [11, 10], 10, true);
+
+                var health = this.health -= 1;
+
+                switch (health) {
+                    case 5:
+                        this.hero.play('explode1');
+                        break;
+                    case 5:
+                        this.hero.play('explode2');
+                        break;
+                    case 4:
+                        this.hero.play('explode3');
+                        break;
+                    case 3:
+                        this.hero.play('explode4');
+                        break;
+                    case 2:
+                        this.hero.play('explode5');
+                        break;
+                    case 1:
+                        this.hero.play('explode6');
+                        break;
+                    default:
+                        this.hero.kill();
+                        this.alive = false;
+                        break;
+
+                }
+
+
+
+
+
+
+            };// Hero hitted
 
             /******************************
              * 
@@ -318,7 +364,7 @@ Started the 26 March 2014
                 score += 10;
 
             };// Bomber hitted
-            
+
             // TRACKER
             EnemyTracker = function(game, id) {
 
@@ -409,6 +455,7 @@ Started the 26 March 2014
 
             function trackerHitHero() {
                 enemies[2].hitted('hero');
+                player.hitted();
             }// Tracker hit hero
 
         </script>
