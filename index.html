@@ -162,7 +162,7 @@ Started the 26 March 2014
                 //  Firing?
                 if (fireButton.isDown)
                 {
-                    fireBullet();
+                    player.fireBullet();
                 }
 
                 scoreText.setText(scoreString + score);
@@ -223,7 +223,7 @@ Started the 26 March 2014
                 }
             };
 
-            function fireBullet() {
+                hero.prototype.fireBullet = function() {
 
                 //  To avoid them being allowed to fire too fast we set a time limit
                 if (game.time.now > bulletTime)
@@ -234,7 +234,7 @@ Started the 26 March 2014
                     if (bullet)
                     {
                         //  And fire it
-                        bullet.reset(player.x + 17, player.y + 8);
+                        bullet.reset(this.hero.x + 17, this.hero.y + 8);
                         bullet.body.velocity.y = -400;
                         bulletTime = game.time.now + 444;
                     }
