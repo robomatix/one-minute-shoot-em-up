@@ -202,7 +202,7 @@ Started the 26 March 2014
                 
                 this.x = this.hero.x;
 
-            };
+            };// Hero
 
             hero.prototype.update = function() {
                 //  Reset the player velocity (movement)
@@ -225,7 +225,7 @@ Started the 26 March 2014
                         this.hero.body.velocity.x = 0;
                     }
                 }
-            };
+            };// Hero Update
 
                 hero.prototype.fireBullet = function() {
 
@@ -293,7 +293,7 @@ Started the 26 March 2014
                 this.bomber.animations.play('blink', 3, true);
                 this.bomber.name = id.toString();
 
-            };
+            };// Bomber
 
             EnemyBomber.prototype.update = function() {
 
@@ -305,7 +305,7 @@ Started the 26 March 2014
                     this.alive = false;
                     this.bomber.kill();
                 }
-            };
+            };// Bomber update
 
             EnemyBomber.prototype.hitted = function() {
 
@@ -317,7 +317,8 @@ Started the 26 March 2014
 
                 score += 10;
 
-            };
+            };// Bomber hitted
+            
             // TRACKER
             EnemyTracker = function(game, id) {
 
@@ -349,7 +350,7 @@ Started the 26 March 2014
                 this.tracker.name = id.toString();
                 this.tracker.heroDetectedByTracker = false;
 
-            };
+            };// Tracker
 
             EnemyTracker.prototype.update = function() {
 
@@ -391,7 +392,7 @@ Started the 26 March 2014
 
 
 
-            };
+            };// Tracker update
 
             EnemyTracker.prototype.hitted = function(objectHitted) {
 
@@ -404,11 +405,11 @@ Started the 26 March 2014
                     score += 30;
                 }
 
-            };
+            };// Tracker hitted
 
             function trackerHitHero() {
                 enemies[2].hitted('hero');
-            }
+            }// Tracker hit hero
 
         </script>
     </head>
