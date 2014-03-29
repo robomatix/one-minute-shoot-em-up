@@ -36,6 +36,8 @@ Started the 26 March 2014
             var playerMove = 180;
             var bullets;
             var bulletTime = 0;
+            var bulletVelocitY = -400;
+            var bulletTimePlus = 444;
             var fireButton;
             // var Enemies
             var enemies;
@@ -237,8 +239,8 @@ Started the 26 March 2014
                     {
                         //  And fire it
                         bullet.reset(this.hero.x + 17, this.hero.y + 8);
-                        bullet.body.velocity.y = -400;
-                        bulletTime = game.time.now + 444;
+                        bullet.body.velocity.y = bulletVelocitY;
+                        bulletTime = game.time.now + bulletTimePlus;
                     }
                 }
 
