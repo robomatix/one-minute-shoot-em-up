@@ -125,8 +125,8 @@ Started the 26 March 2014
 
                     if (enemies[i].alive)
                     {
-                        game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitBomber, null, this);
-                        game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitBomber, null, this);
+                        game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
+                        game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
                         enemies[i].update();
 
                     } else {
@@ -223,7 +223,7 @@ Started the 26 March 2014
 
             }//fireBullet
 
-            function bulletHitBomber(enemy, bullet) {
+            function bulletHitEnemy(enemy, bullet) {
 
                 bullet.kill();
                 enemies[enemy.name].hitted();
