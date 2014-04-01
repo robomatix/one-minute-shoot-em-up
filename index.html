@@ -53,8 +53,8 @@ Started the 26 March 2014
             var fireRayFactorMax = 100;
             var fireRayFactorRef = 95;
             var fireRayTimerDelta = 200;
-            var rayVelocitY = 333;
-            var rayScore = 2;
+            var enemyBomberRayVelocitY = 333;
+            var enemyBomberRayScore = 2;
             var trackerMoveX = 200;
             var trackerMoveY = 1200;
             /******************************
@@ -142,6 +142,7 @@ Started the 26 March 2014
                         game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
                         game.physics.arcade.overlap(enemyBombs, player.hero, bombHitHero, null, this);
                         game.physics.arcade.overlap(bullets, enemyBombs, bulletHitBomb, null, this);
+                        game.physics.arcade.overlap(bullets, enemyBomberRays, bulletHitBomberRay, null, this);
                         enemies[i].update();
                         if (i < 2)
                         {
@@ -289,11 +290,12 @@ Started the 26 March 2014
                     enemyBomb.animations.add('bomb1Explode1');
                     enemyBomb.animations.play('bomb1Explode1', 9, false, true);
                 }
-
-
-
-
             }// bulletHitBomb
+            function bulletHitBomberRay(bullet, enemyBomberRay) {
+                bullet.kill();
+                enemyBomberRay.kill();
+                score += enemyBomberRayScore;
+            }
 
             hero.prototype.hitted = function() {
 
@@ -438,7 +440,7 @@ Started the 26 March 2014
 
                         //  And fire it
                         enemyBomberRay.reset(this.bomber.x + bomderDeltaRayX, this.bomber.y + 25);
-                        enemyBomberRay.body.velocity.y = rayVelocitY;
+                        enemyBomberRay.body.velocity.y = enemyBomberRayVelocitY;
                         this.fireRayTimer = game.time.now + fireRayTimerDelta;
                     }
                 }
