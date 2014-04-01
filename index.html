@@ -42,6 +42,10 @@ Started the 26 March 2014
             // var Enemies
             var enemies;
             var bomberMove = 75;
+            var dropBombFactorMax = 100;
+            var dropBombFactorRef = 98; // Drop the bomb if 1->dropBombFactorMax > dropBombFactorRef
+            var dropBombTimerDelta = 300; // Drop a bomb tested every...
+            var bombVelocitY = 80;
             var trackerMoveX = 200;
             var trackerMoveY = 1200;
 
@@ -61,6 +65,7 @@ Started the 26 March 2014
 
                 game.load.spritesheet('bomber', 'assets/picts/enemy-bomber-1.png', 60, 40, 3);
                 game.load.spritesheet('bomberExplode', 'assets/picts/enemy-bomber-1-explode.png', 60, 40, 4);
+                game.load.spritesheet('bombe1', 'assets/picts/enemy-bomb-1-explode.png', 20, 30, 5);
 
                 game.load.spritesheet('tracker', 'assets/picts/enemy-tracker-1-and-explode.png', 40, 36, 5);
 
@@ -81,6 +86,14 @@ Started the 26 March 2014
                 bullets.createMultiple(30, 'bullet');
                 bullets.setAll('checkWorldBounds', true);
                 bullets.setAll('outOfBoundsKill', true);
+
+                // The enemy's Bombs
+                enemyBombs = game.add.group();
+                enemyBombs.enableBody = true;
+                enemyBombs.physicsBodyType = Phaser.Physics.ARCADE;
+                enemyBombs.createMultiple(30, 'bombe1');
+                enemyBombs.setAll('checkWorldBounds', true);
+                enemyBombs.setAll('outOfBoundsKill', true);
 
 
                 //  The hero!
@@ -128,6 +141,10 @@ Started the 26 March 2014
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
                         enemies[i].update();
+                        if (i < 2)
+                        {
+                            enemies[i].dropsBomb();
+                        }
 
                     } else {
 
@@ -255,7 +272,7 @@ Started the 26 March 2014
             }// bulletHitEnemy
 
             hero.prototype.hitted = function() {
-                
+
                 // The different states of the hero according to his health
                 this.hero.animations.add('explode1', [1, 2], 10, false);
                 this.hero.animations.add('explode2', [3, 4], 10, false);
@@ -326,6 +343,7 @@ Started the 26 March 2014
 
                 this.health = 1;
                 this.alive = true;
+                this.dropBombTimer = game.time.now;
 
                 this.bomber = game.add.sprite(x, y, 'bomber');
                 this.game.physics.arcade.enable(this.bomber);
@@ -358,6 +376,28 @@ Started the 26 March 2014
                 score += 10;
 
             };// Bomber hitted
+
+            EnemyBomber.prototype.dropsBomb = function() {
+
+                //  To avoid them being allowed to fire too fast we set a time limit
+                if (game.time.now > this.dropBombTimer)
+                {
+                    //  Grab the first bullet we can from the pool
+                    enemyBomb = enemyBombs.getFirstExists(false);
+                    
+                    // Determinate the dropBombFactor
+                dropBombFactor = this.game.rnd.integerInRange(1, dropBombFactorMax);
+
+                    if (enemyBomb && dropBombFactor > dropBombFactorRef )
+                    {
+                        //  And fire it
+                        enemyBomb.reset(this.bomber.x + 20, this.bomber.y + 25);
+                        enemyBomb.body.velocity.y = bombVelocitY;
+                        this.dropBombTimer = game.time.now + dropBombTimerDelta;
+                    }
+                }
+
+            };//dropsBomb
 
             // TRACKER
             EnemyTracker = function(game, id) {
