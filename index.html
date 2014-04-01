@@ -25,12 +25,15 @@ Started the 26 March 2014
 
             // var countdown
             var countdownDisplay = 60;
-            var countdownString = '';
+            var countdownString = 'Countdown : ';
             var countdownText;
             // var info jeu
             var score = 0;
             var scoreString = 'Score : ';
             var scoreText;
+            var levelString = 'Level : ';
+            var level = 1;
+            var levelText;
             // var Hero
             var player;
             var playerMove = 180;
@@ -75,10 +78,10 @@ Started the 26 March 2014
 
             function create() {
 
-                // The countdown
-                game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);
-                countdownString = 'Countdown : ';
+                // The countdown and the level
+                game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);                
                 countdownText = game.add.text(100, 100, countdownString + countdownDisplay, {fontSize: '34px', fill: '#fff'});
+                levelText = game.add.text(350, 20, levelString + level, {fontSize: '14px', fill: '#fff'});               
 
                 //  Our bullet group
                 bullets = game.add.group();
@@ -131,6 +134,7 @@ Started the 26 March 2014
             }// create
 
             function update() {
+
 
                 // Enemies Test and actions
                 for (var i = 0; i < enemies.length; i++)
@@ -198,6 +202,19 @@ Started the 26 March 2014
             function countDown() {
                 countdownDisplay -= 1;
                 countdownText.setText(countdownString + countdownDisplay);
+                switch (countdownDisplay) {
+                    case 45:
+                        level = 2;
+                        break;
+                    case 30:
+                        level = 3;
+                        break;
+                    case 15:
+                        level = 4;
+                        break;
+
+                }
+                levelText.setText(levelString + level);
 
             }
 
