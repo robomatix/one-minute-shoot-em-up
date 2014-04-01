@@ -141,6 +141,7 @@ Started the 26 March 2014
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
                         game.physics.arcade.overlap(enemyBombs, player.hero, bombHitHero, null, this);
+                        game.physics.arcade.overlap(bullets, enemyBombs, bulletHitBomb, null, this);
                         enemies[i].update();
                         if (i < 2)
                         {
@@ -272,6 +273,22 @@ Started the 26 March 2014
 
             }// bulletHitEnemy
 
+            function bulletHitBomb(bullet, enemyBomb) {
+
+                bullet.kill();
+
+                if (enemyBomb.alive) {
+                    enemyBomb.alive = false;
+                    score += 1;
+                    enemyBomb.animations.add('bomb1Explode1');
+                    enemyBomb.animations.play('bomb1Explode1', 9, false, true);
+                }
+
+
+
+
+            }// bulletHitBomb
+
             hero.prototype.hitted = function() {
 
                 // The different states of the hero according to his health
@@ -393,15 +410,15 @@ Started the 26 March 2014
                     {
                         //  And fire it
                         enemyBomb.reset(this.bomber.x + 20, this.bomber.y + 25);
+                        enemyBomb.animations.frame = 0; // Set to the first frame otherwise, the last frame is displayed when the bomb 'respwn'
                         enemyBomb.body.velocity.y = bombVelocitY;
+                        enemyBomb.alive = true;
                         this.dropBombTimer = game.time.now + dropBombTimerDelta;
                     }
                 }
 
             };//dropsBomb
             function bombHitHero(dummyPlayer, enemyBomb) {
-                // enemyBomb.animations.add('bomb1Explode1', [1,2,3,4,0], 9, false);
-                // enemyBomb.animations.play('bomb1Explode1', 9, false, true);
                 enemyBomb.kill();
                 player.hitted();
             }// Tracker hit hero
