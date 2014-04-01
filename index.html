@@ -46,6 +46,7 @@ Started the 26 March 2014
             var dropBombFactorRef = 98; // Drop the bomb if 1->dropBombFactorMax > dropBombFactorRef
             var dropBombTimerDelta = 300; // Drop a bomb tested every dropBombTimerDelta ms...
             var bombVelocitY = 80;
+            var bombScore = 1;
             var trackerMoveX = 200;
             var trackerMoveY = 1200;
 
@@ -279,7 +280,7 @@ Started the 26 March 2014
 
                 if (enemyBomb.alive) {
                     enemyBomb.alive = false;
-                    score += 1;
+                    score += bombScore;
                     enemyBomb.animations.add('bomb1Explode1');
                     enemyBomb.animations.play('bomb1Explode1', 9, false, true);
                 }
