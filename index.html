@@ -50,39 +50,36 @@ Started the 26 March 2014
             var dropBombTimerDelta = 300; // Drop a bomb tested every dropBombTimerDelta ms...
             var bombVelocitY = 80;
             var bombScore = 1;
+            var fireRayFactorMax = 100;
+            var fireRayFactorRef = 95;
+            var fireRayTimerDelta = 200;
+            var rayVelocitY = 333;
+            var rayScore = 2;
             var trackerMoveX = 200;
             var trackerMoveY = 1200;
-
-
-
-
             /******************************
              * 
              * THE GAME
              *******************************/
             var game = new Phaser.Game(500, 500, Phaser.AUTO, '', {preload: preload, create: create, update: update});
-
             function preload() {
 
                 game.load.spritesheet('hero', 'assets/picts/hero-hitted-and-damaged.png', 40, 40);
                 game.load.image('bullet', 'assets/picts/bullet-hero-1.png');
-
                 game.load.spritesheet('bomber', 'assets/picts/enemy-bomber-1.png', 60, 40, 3);
                 game.load.spritesheet('bomberExplode', 'assets/picts/enemy-bomber-1-explode.png', 60, 40, 4);
                 game.load.spritesheet('bomb1', 'assets/picts/enemy-bomb-1-explode.png', 20, 30, 5);
-
+                game.load.spritesheet('bomberRay', 'assets/picts/enemy-bomber-rays.png', 6, 17, 3);
                 game.load.spritesheet('tracker', 'assets/picts/enemy-tracker-1-and-explode.png', 40, 36, 5);
-
             }// preload
 
 
             function create() {
 
                 // The countdown and the level
-                game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);                
+                game.time.events.repeat(Phaser.Timer.SECOND * 1, 60, countDown, this);
                 countdownText = game.add.text(100, 100, countdownString + countdownDisplay, {fontSize: '34px', fill: '#fff'});
-                levelText = game.add.text(350, 20, levelString + level, {fontSize: '14px', fill: '#fff'});               
-
+                levelText = game.add.text(350, 20, levelString + level, {fontSize: '14px', fill: '#fff'});
                 //  Our bullet group
                 bullets = game.add.group();
                 bullets.enableBody = true;
@@ -90,26 +87,27 @@ Started the 26 March 2014
                 bullets.createMultiple(30, 'bullet');
                 bullets.setAll('checkWorldBounds', true);
                 bullets.setAll('outOfBoundsKill', true);
-
-                // The enemy's Bombs
+                // The bombers's Bombs
                 enemyBombs = game.add.group();
                 enemyBombs.enableBody = true;
                 enemyBombs.physicsBodyType = Phaser.Physics.ARCADE;
                 enemyBombs.createMultiple(30, 'bomb1');
                 enemyBombs.setAll('checkWorldBounds', true);
                 enemyBombs.setAll('outOfBoundsKill', true);
-
-
+                // The bomber's Ray
+                enemyBomberRays = game.add.group();
+                enemyBomberRays.enableBody = true;
+                enemyBomberRays.physicsBodyType = Phaser.Physics.ARCADE;
+                enemyBomberRays.createMultiple(30, 'bomberRay');
+                enemyBomberRays.setAll('checkWorldBounds', true);
+                enemyBomberRays.setAll('outOfBoundsKill', true);
                 //  The hero!
                 player = new hero(game);
-
                 //  And some controls to play the game with
                 cursors = game.input.keyboard.createCursorKeys();
                 fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
                 //  Create some baddies to have fun with :)
                 enemies = [];
-
                 // Create Bombers
                 for (var i = 0; i < 3; i++)
                 {
@@ -126,11 +124,8 @@ Started the 26 March 2014
                 enemies[1].bomber.kill();
                 enemies[2].alive = false;
                 enemies[2].tracker.kill();
-
                 //  The score
                 scoreText = game.add.text(10, 10, scoreString + score, {fontSize: '34px', fill: '#fff'});
-
-
             }// create
 
             function update() {
@@ -151,6 +146,12 @@ Started the 26 March 2014
                         if (i < 2)
                         {
                             enemies[i].dropsBomb();
+                            if (i === 0 && level > 1) {
+                                enemies[i].firesRay();
+                            }
+                            if (i === 1 && level > 2) {
+                                enemies[i].firesRay();
+                            }
                         }
 
                     } else {
@@ -184,7 +185,6 @@ Started the 26 March 2014
 
                 // Moving Hero
                 player.update();
-
                 //  Firing?
                 if (fireButton.isDown)
                 {
@@ -212,10 +212,8 @@ Started the 26 March 2014
                     case 15:
                         level = 4;
                         break;
-
                 }
                 levelText.setText(levelString + level);
-
             }
 
             /******************************
@@ -228,24 +226,17 @@ Started the 26 March 2014
                 // var
                 var startX = 230;
                 var startY = 455;
-
                 this.game = game;
-
                 this.health = 6;
                 this.alive = true;
-
                 this.hero = game.add.sprite(startX, startY, 'hero');
                 game.physics.arcade.enable(this.hero);
-
                 this.x = this.hero.x;
-
-
-            };// Hero
+            }; // Hero
 
             hero.prototype.update = function() {
                 //  Reset the player velocity (movement)
                 this.hero.body.velocity.x = 0;
-
                 //  Move the player
                 if (cursors.left.isDown)
                 {
@@ -263,7 +254,7 @@ Started the 26 March 2014
                         this.hero.body.velocity.x = 0;
                     }
                 }
-            };// Hero Update
+            }; // Hero Update
 
             hero.prototype.fireBullet = function() {
 
@@ -272,7 +263,6 @@ Started the 26 March 2014
                 {
                     //  Grab the first bullet we can from the pool
                     bullet = bullets.getFirstExists(false);
-
                     if (bullet && this.alive)
                     {
                         //  And fire it
@@ -282,19 +272,17 @@ Started the 26 March 2014
                     }
                 }
 
-            };//fireBullet
+            }; //fireBullet
 
             function bulletHitEnemy(enemy, bullet) {
 
                 bullet.kill();
                 enemies[enemy.name].hitted();
-
             }// bulletHitEnemy
 
             function bulletHitBomb(bullet, enemyBomb) {
 
                 bullet.kill();
-
                 if (enemyBomb.alive) {
                     enemyBomb.alive = false;
                     score += bombScore;
@@ -316,9 +304,7 @@ Started the 26 March 2014
                 this.hero.animations.add('explode4', [7, 8], 10, false);
                 this.hero.animations.add('explode5', [9, 10], 10, false);
                 this.hero.animations.add('explode6', [11, 10], 10, true);
-
                 var health = this.health -= 1;
-
                 switch (health) {
                     case 5:
                         this.hero.play('explode1');
@@ -344,7 +330,7 @@ Started the 26 March 2014
                         break;
                 }
 
-            };// Hero hitted
+            }; // Hero hitted
 
             /******************************
              * 
@@ -357,12 +343,9 @@ Started the 26 March 2014
                 // var
                 var lr;
                 var y;
-
                 this.game = game;
-
                 // Determinate if the bomber appear on the Left or on the Right
                 lr = this.game.rnd.integerInRange(1, 100);
-
                 // The starting position of the bomber and consquently his moving direction
                 if (id === 0) {
                     y = 25;
@@ -380,62 +363,88 @@ Started the 26 March 2014
                 this.health = 1;
                 this.alive = true;
                 this.dropBombTimer = game.time.now;
-
+                this.fireRayTimer = game.time.now;
                 this.bomber = game.add.sprite(x, y, 'bomber');
                 this.game.physics.arcade.enable(this.bomber);
                 this.bomber.animations.add('blink');
                 this.bomber.animations.play('blink', 3, true);
                 this.bomber.name = id.toString();
-
-            };// Bomber
+            }; // Bomber
 
             EnemyBomber.prototype.update = function() {
 
                 // Moves the bomber
                 this.bomber.body.velocity.x = this.moveX;
-
                 // Kill bomber if out of game area
                 if (this.bomber.x < -60 || this.bomber.x > 560) {
                     this.alive = false;
                     this.bomber.kill();
                 }
-            };// Bomber update
+            }; // Bomber update
 
             EnemyBomber.prototype.hitted = function() {
 
                 this.bomber.loadTexture('bomberExplode', 0);
                 this.bomber.animations.add('explode');
                 this.bomber.animations.play('explode', 9, false, true);
-
                 this.alive = false;
-
                 score += 10;
-
-            };// Bomber hitted
+            }; // Bomber hitted
 
             EnemyBomber.prototype.dropsBomb = function() {
-
                 //  To avoid them being allowed to fire too fast we set a time limit
                 if (game.time.now > this.dropBombTimer)
                 {
                     //  Grab the first bullet we can from the pool
                     enemyBomb = enemyBombs.getFirstExists(false);
-
                     // Determinate the dropBombFactor
                     dropBombFactor = this.game.rnd.integerInRange(1, dropBombFactorMax);
-
                     if (enemyBomb && dropBombFactor > dropBombFactorRef)
                     {
                         //  And fire it
                         enemyBomb.reset(this.bomber.x + 20, this.bomber.y + 25);
-                        enemyBomb.animations.frame = 0; // Set to the first frame otherwise, the last frame is displayed when the bomb 'respwn'
+                        enemyBomb.animations.frame = 0; // Set to the first frame otherwise, the last frame is displayed when the bomb 'respawn'
                         enemyBomb.body.velocity.y = bombVelocitY;
                         enemyBomb.alive = true;
                         this.dropBombTimer = game.time.now + dropBombTimerDelta;
                     }
                 }
 
-            };//dropsBomb
+            }; //dropsBomb
+
+            EnemyBomber.prototype.firesRay = function() {
+
+                //  To avoid them being allowed to fire too fast we set a time limit
+                if (game.time.now > this.fireRayTimer)
+                {
+                    //  Grab the first bullet we can from the pool
+                    enemyBomberRay = enemyBomberRays.getFirstExists(false);
+                    // Determinate the dropBombFactor
+                    fireRayFactor = this.game.rnd.integerInRange(1, fireRayFactorMax);
+                    if (enemyBomberRay && fireRayFactor > fireRayFactorRef)
+                    {
+
+                        // Determinate if the bomber fires on the Left or on the Right
+                        var lr = this.game.rnd.integerInRange(1, 100);
+                        if (lr > 50) {
+                            var bomderDeltaRayX = 1;
+                        } else {
+                            var bomderDeltaRayX = 53;
+                        }
+
+                        // Determinate the color of the ray
+                        var cr = this.game.rnd.integerInRange(0, 2); // the sprit as 3 frames, one for each color                        
+                        enemyBomberRay.frame = cr;
+
+                        //  And fire it
+                        enemyBomberRay.reset(this.bomber.x + bomderDeltaRayX, this.bomber.y + 25);
+                        enemyBomberRay.body.velocity.y = rayVelocitY;
+                        this.fireRayTimer = game.time.now + fireRayTimerDelta;
+                    }
+                }
+
+            }; //firesRay
+
             function bombHitHero(dummyPlayer, enemyBomb) {
                 enemyBomb.kill();
                 player.hitted();
@@ -447,12 +456,9 @@ Started the 26 March 2014
                 // var
                 var lr;
                 var y;
-
                 this.game = game;
-
                 // Determinate if the tracker appear on the Left or on the Right
                 lr = this.game.rnd.integerInRange(1, 100);
-
                 // The starting position of the tracker and consquently his moving direction
                 var y = 125;
                 this.moveY = 0;
@@ -466,18 +472,15 @@ Started the 26 March 2014
 
                 this.health = 1;
                 this.alive = true;
-
                 this.tracker = game.add.sprite(x, y, 'tracker');
                 this.game.physics.arcade.enable(this.tracker);
                 this.tracker.name = id.toString();
                 this.tracker.heroDetectedByTracker = false;
-
-            };// Tracker
+            }; // Tracker
 
             EnemyTracker.prototype.update = function() {
 
                 var posX = this.tracker.x;
-
                 // Moves the tracker             
                 if (posX < 5) {
                     this.moveX = trackerMoveX;
@@ -514,20 +517,18 @@ Started the 26 March 2014
 
 
 
-            };// Tracker update
+            }; // Tracker update
 
             EnemyTracker.prototype.hitted = function(objectHitted) {
 
                 this.tracker.animations.add('explode');
                 this.tracker.animations.play('explode', 9, false, true);
-
                 this.alive = false;
-
                 if (objectHitted !== 'hero') {
                     score += 30;
                 }
 
-            };// Tracker hitted
+            }; // Tracker hitted
 
             function trackerHitHero() {
                 enemies[2].hitted('hero');
