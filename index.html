@@ -57,6 +57,11 @@ Started the 26 March 2014
             var enemyBomberRayScore = 2;
             var trackerMoveX = 200;
             var trackerMoveY = 1200;
+            var fireTrackerRaysFactorMax = 100;
+            var fireTrackerRaysRef = 95;
+            var fireTrackerRaysTimerDelta = 100;
+            var fireTrackerRaysVelocitY = 555;
+            var fireTrackerRaysScore = 5;
             /******************************
              * 
              * THE GAME
@@ -71,6 +76,8 @@ Started the 26 March 2014
                 game.load.spritesheet('bomb1', 'assets/picts/enemy-bomb-1-explode.png', 20, 30, 5);
                 game.load.spritesheet('bomberRay', 'assets/picts/enemy-bomber-rays.png', 6, 17, 3);
                 game.load.spritesheet('tracker', 'assets/picts/enemy-tracker-1-and-explode.png', 40, 36, 5);
+                game.load.image('trackerRay', 'assets/picts/enemy-tracker-1-ray.png');
+
             }// preload
 
 
@@ -87,6 +94,7 @@ Started the 26 March 2014
                 bullets.createMultiple(30, 'bullet');
                 bullets.setAll('checkWorldBounds', true);
                 bullets.setAll('outOfBoundsKill', true);
+
                 // The bombers's Bombs
                 enemyBombs = game.add.group();
                 enemyBombs.enableBody = true;
@@ -101,6 +109,14 @@ Started the 26 March 2014
                 enemyBomberRays.createMultiple(30, 'bomberRay');
                 enemyBomberRays.setAll('checkWorldBounds', true);
                 enemyBomberRays.setAll('outOfBoundsKill', true);
+                // The Tracker's Rays
+                enemyTrackerRayss = game.add.group();
+                enemyTrackerRayss.enableBody = true;
+                enemyTrackerRayss.physicsBodyType = Phaser.Physics.ARCADE;
+                enemyTrackerRayss.createMultiple(30, 'trackerRay');
+                enemyTrackerRayss.setAll('checkWorldBounds', true);
+                enemyTrackerRayss.setAll('outOfBoundsKill', true);
+
                 //  The hero!
                 player = new hero(game);
                 //  And some controls to play the game with
@@ -154,6 +170,9 @@ Started the 26 March 2014
                             if (i === 1 && level > 2) {
                                 enemies[i].firesRay();
                             }
+                        }
+                        if (i === 2 && level > 2) {
+                            enemies[i].firesRays();
                         }
 
                     } else {
@@ -480,6 +499,7 @@ Started the 26 March 2014
 
                 this.health = 1;
                 this.alive = true;
+                this.fireRaysTimer = game.time.now;
                 this.tracker = game.add.sprite(x, y, 'tracker');
                 this.game.physics.arcade.enable(this.tracker);
                 this.tracker.name = id.toString();
@@ -542,6 +562,36 @@ Started the 26 March 2014
                 enemies[2].hitted('hero');
                 player.hitted();
             }// Tracker hit hero
+
+            EnemyTracker.prototype.firesRays = function() {
+
+                //  To avoid them being allowed to fire too fast we set a time limit
+                if (game.time.now > this.fireRaysTimer)
+                {
+
+
+                    // Determinate the dropBombFactor
+                    fireTrackerRaysFactor = this.game.rnd.integerInRange(1, fireTrackerRaysFactorMax);
+
+                    //  Grab the first bullet we can from the pool
+                    enemyTrackerRay1 = enemyTrackerRayss.getFirstExists(false);
+                    if (enemyTrackerRay1 && fireTrackerRaysFactor > fireTrackerRaysRef)
+                    {
+                        //  And fire it
+                        enemyTrackerRay1.reset(this.tracker.x + 4, this.tracker.y + 36);
+                        enemyTrackerRay1.body.velocity.y = fireTrackerRaysVelocitY;
+                    }
+                    enemyTrackerRay2 = enemyTrackerRayss.getFirstExists(false);
+                    if (enemyTrackerRay2 && fireTrackerRaysFactor > fireTrackerRaysRef)
+                    {
+                        //  And fire it
+                        enemyTrackerRay2.reset(this.tracker.x + 36, this.tracker.y + 36);
+                        enemyTrackerRay2.body.velocity.y = fireTrackerRaysVelocitY;
+                        this.fireRaysTimer = game.time.now + fireTrackerRaysTimerDelta;
+                    }
+                }
+
+            }; //firesRays
 
         </script>
     </head>
