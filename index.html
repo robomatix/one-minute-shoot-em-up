@@ -61,7 +61,7 @@ Started the 26 March 2014
             var fireTrackerRaysRef = 95;
             var fireTrackerRaysTimerDelta = 100;
             var fireTrackerRaysVelocitY = 555;
-            var fireTrackerRaysScore = 5;
+            var enemyTrackerRaysScore = 50000000;
             /******************************
              * 
              * THE GAME
@@ -160,6 +160,7 @@ Started the 26 March 2014
                         game.physics.arcade.overlap(bullets, enemyBombs, bulletHitBomb, null, this);
                         game.physics.arcade.overlap(bullets, enemyBomberRays, bulletHitBomberRay, null, this);
                         game.physics.arcade.overlap(player.hero, enemyBomberRays, enemyBomberRayHitHero, null, this);
+                        game.physics.arcade.overlap(bullets, enemyTrackerRayss, bulletHitTrackerRay, null, this);
                         enemies[i].update();
                         if (i < 2)
                         {
@@ -315,6 +316,11 @@ Started the 26 March 2014
                 bullet.kill();
                 enemyBomberRay.kill();
                 score += enemyBomberRayScore;
+            }
+            function bulletHitTrackerRay(bullet, enemyTrackerRay) {
+                bullet.kill();
+                enemyTrackerRay.kill();
+                score += enemyTrackerRaysScore;
             }
 
             hero.prototype.hitted = function() {
