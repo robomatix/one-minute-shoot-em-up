@@ -50,9 +50,9 @@ Started the 26 March 2014
             var dropBombTimerDelta = 300; // Drop a bomb tested every dropBombTimerDelta ms...
             var bombVelocitY = 80;
             var bombScore = 1;
-            var fireRayFactorMax = 100;
-            var fireRayFactorRef = 95;
-            var fireRayTimerDelta = 200;
+            var fireBomberRayFactorMax = 100;
+            var fireBomberRayFactorRef = 95;
+            var fireBomberRayTimerDelta = 200;
             var enemyBomberRayVelocitY = 333;
             var enemyBomberRayScore = 2;
             var trackerMoveX = 200;
@@ -61,7 +61,7 @@ Started the 26 March 2014
             var fireTrackerRaysRef = 95;
             var fireTrackerRaysTimerDelta = 100;
             var fireTrackerRaysVelocitY = 555;
-            var enemyTrackerRaysScore = 50000000;
+            var enemyTrackerRaysScore = 5;
             /******************************
              * 
              * THE GAME
@@ -452,8 +452,8 @@ Started the 26 March 2014
                     //  Grab the first bullet we can from the pool
                     enemyBomberRay = enemyBomberRays.getFirstExists(false);
                     // Determinate the dropBombFactor
-                    fireRayFactor = this.game.rnd.integerInRange(1, fireRayFactorMax);
-                    if (enemyBomberRay && fireRayFactor > fireRayFactorRef)
+                    fireBomberRayFactor = this.game.rnd.integerInRange(1, fireBomberRayFactorMax);
+                    if (enemyBomberRay && fireBomberRayFactor > fireBomberRayFactorRef)
                     {
 
                         // Determinate if the bomber fires on the Left or on the Right
@@ -471,7 +471,7 @@ Started the 26 March 2014
                         //  And fire it
                         enemyBomberRay.reset(this.bomber.x + bomderDeltaRayX, this.bomber.y + 25);
                         enemyBomberRay.body.velocity.y = enemyBomberRayVelocitY;
-                        this.fireRayTimer = game.time.now + fireRayTimerDelta;
+                        this.fireRayTimer = game.time.now + fireBomberRayTimerDelta;
                     }
                 }
 
