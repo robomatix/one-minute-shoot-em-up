@@ -149,11 +149,12 @@ Started the 26 March 2014
                 // Test commun overlaps
 
                 game.physics.arcade.overlap(enemyBombs, player.hero, bombHitHero, null, this);
-                game.physics.arcade.overlap(bullets, enemyBombs, bulletHitBomb, null, this);
-                game.physics.arcade.overlap(bullets, enemyBomberRays, bulletHitBomberRay, null, this);
                 game.physics.arcade.overlap(player.hero, enemyBomberRays, enemyBomberRayHitHero, null, this);
-                game.physics.arcade.overlap(bullets, enemyTrackerRayss, bulletHitTrackerRay, null, this);
                 game.physics.arcade.overlap(player.hero, enemyTrackerRayss, enemyTrackerRayHitHero, null, this);
+                game.physics.arcade.overlap(bullets, enemyBombs, bulletHitEnemyBullet, null, this);
+                game.physics.arcade.overlap(bullets, enemyBomberRays, bulletHitEnemyBullet, null, this);
+                game.physics.arcade.overlap(bullets, enemyTrackerRayss, bulletHitEnemyBullet, null, this);
+
 
 
                 // Enemies Test and actions
@@ -306,25 +307,27 @@ Started the 26 March 2014
                 enemies[enemy.name].hitted();
             }// bulletHitEnemy
 
-            function bulletHitBomb(bullet, enemyBomb) {
-
+            function bulletHitEnemyBullet(bullet, enemyBullet) {
                 bullet.kill();
-                if (enemyBomb.alive) {
-                    enemyBomb.alive = false;
-                    score += bombScore;
-                    enemyBomb.animations.add('bomb1Explode1');
-                    enemyBomb.animations.play('bomb1Explode1', 9, false, true);
+                enemyBulletname = enemyBullet.name;
+                switch (enemyBulletname) {
+                    case 'enemyBomb':
+                        if (enemyBullet.alive) {
+                            enemyBullet.alive = false;
+                            score += bombScore;
+                            enemyBullet.animations.add('bomb1Explode1');
+                            enemyBullet.animations.play('bomb1Explode1', 9, false, true);
+                        }
+                        break;
+                    case 'enemyBomberRay':
+                        enemyBullet.kill();
+                        score += enemyTrackerRaysScore;
+                        break;
+                    case 'enemyTrackerRay':
+                        enemyBullet.kill();
+                        score += enemyTrackerRaysScore;
+                        break;
                 }
-            }// bulletHitBomb
-            function bulletHitBomberRay(bullet, enemyBomberRay) {
-                bullet.kill();
-                enemyBomberRay.kill();
-                score += enemyBomberRayScore;
-            }
-            function bulletHitTrackerRay(bullet, enemyTrackerRay) {
-                bullet.kill();
-                enemyTrackerRay.kill();
-                score += enemyTrackerRaysScore;
             }
 
             hero.prototype.hitted = function() {
@@ -434,6 +437,7 @@ Started the 26 March 2014
                     if (enemyBomb && dropBombFactor > dropBombFactorRef)
                     {
                         //  And fire it
+                        enemyBomb.name = 'enemyBomb';
                         enemyBomb.reset(this.bomber.x + 20, this.bomber.y + 25);
                         enemyBomb.animations.frame = 0; // Set to the first frame otherwise, the last frame is displayed when the bomb 'respawn'
                         enemyBomb.body.velocity.y = bombVelocitY;
@@ -469,6 +473,7 @@ Started the 26 March 2014
                         enemyBomberRay.frame = cr;
 
                         //  And fire it
+                        enemyBomberRay.name = 'enemyBomberRay';
                         enemyBomberRay.reset(this.bomber.x + bomderDeltaRayX, this.bomber.y + 25);
                         enemyBomberRay.body.velocity.y = enemyBomberRayVelocitY;
                         this.fireRayTimer = game.time.now + fireBomberRayTimerDelta;
@@ -577,7 +582,7 @@ Started the 26 March 2014
                 enemyTrackerRay.kill();
                 player.hitted();
             }//enemyBomberRayHitHero
-            
+
             EnemyTracker.prototype.firesRays = function() {
 
                 //  To avoid them being allowed to fire too fast we set a time limit
@@ -593,6 +598,7 @@ Started the 26 March 2014
                     if (enemyTrackerRay1 && fireTrackerRaysFactor > fireTrackerRaysRef)
                     {
                         //  And fire it
+                        enemyTrackerRay1.name = 'enemyTrackerRay';
                         enemyTrackerRay1.reset(this.tracker.x + 4, this.tracker.y + 36);
                         enemyTrackerRay1.body.velocity.y = fireTrackerRaysVelocitY;
                     }
@@ -600,6 +606,7 @@ Started the 26 March 2014
                     if (enemyTrackerRay2 && fireTrackerRaysFactor > fireTrackerRaysRef)
                     {
                         //  And fire it
+                        enemyTrackerRay2.name = 'enemyTrackerRay';
                         enemyTrackerRay2.reset(this.tracker.x + 36, this.tracker.y + 36);
                         enemyTrackerRay2.body.velocity.y = fireTrackerRaysVelocitY;
                         this.fireRaysTimer = game.time.now + fireTrackerRaysTimerDelta;
