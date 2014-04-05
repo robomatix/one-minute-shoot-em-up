@@ -190,14 +190,14 @@ Started the 26 March 2014
                             }
                         }
 
-                        if (i === 1 && countdownDisplay < 45) {
+                        if (i === 1 && level >= 2) {
                             var randomGenerateBomber1 = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateBomber1 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 1);
                             }
                         }
 
-                        if (i === 2 && countdownDisplay < 30) {
+                        if (i === 2 && level >= 3) {
                             var randomGenerateTracker = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateTracker > 88888) {
                                 enemies[i] = new EnemyTracker(game, 2);
