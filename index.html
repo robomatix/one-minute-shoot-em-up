@@ -63,6 +63,7 @@ Started the 26 March 2014
             var fireTrackerRaysVelocitY = 555;
             var enemyTrackerRaysScore = 5;
             var boss1Move = 125;
+            var boss1Score = 55;
             /******************************
              * 
              * THE GAME
@@ -141,6 +142,8 @@ Started the 26 March 2014
                 }
 
                 // Apparently the second bomber (1) and the tracker must be created and destroyed in order to get it work with the countdown
+                                enemies[0].alive = false;
+                enemies[0].bomber.kill();
                 enemies[1].alive = false;
                 enemies[1].bomber.kill();
                 enemies[2].alive = false;
@@ -172,6 +175,7 @@ Started the 26 March 2014
                     {
                         game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
+                        game.physics.arcade.overlap(bullets, enemies[i].boss1, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
 
                         enemies[i].update();
@@ -191,6 +195,7 @@ Started the 26 March 2014
                         }
 
                     } else {
+                        /*
 
                         if (i === 0 && level < 4) {
                             var randomGenerateBomber0 = game.rnd.integerInRange(1, 100000);
@@ -211,8 +216,8 @@ Started the 26 March 2014
                             if (randomGenerateTracker > 88888) {
                                 enemies[i] = new EnemyTracker(game, 2);
                             }
-                        }
-                        if (i === 3 && level === 4 && !enemies[0].alive && !enemies[1].alive) {
+                        }*/
+                        if (i === 3 && level >= 1 ){//level === 4 && !enemies[0].alive && !enemies[1].alive) {
                             enemies[i] = new boss1(game, 3);
                         }
 
@@ -318,9 +323,11 @@ Started the 26 March 2014
 
                 bullet.kill();
                 enemies[enemy.name].hitted();
+                
             }// bulletHitEnemy
 
             function bulletHitEnemyBullet(bullet, enemyBullet) {
+                
                 bullet.kill();
                 enemyBulletname = enemyBullet.name;
                 switch (enemyBulletname) {
@@ -340,6 +347,7 @@ Started the 26 March 2014
                         enemyBullet.kill();
                         score += enemyTrackerRaysScore;
                         break;
+                        
                 }
             }// bulletHitEnemyBullet
 
@@ -647,7 +655,7 @@ Started the 26 March 2014
                     this.moveX = -boss1Move;
                 }
 
-                this.health = 4;
+                this.health = 5;
                 this.alive = true;
                 this.fireRayTimer = game.time.now;
                 this.boss1 = game.add.sprite(x, y, 'boss1');
@@ -671,7 +679,39 @@ Started the 26 March 2014
                 
                 // Moves
                 this.boss1.body.velocity.x = this.moveX;
+                
             }; // Boss1 update
+            
+            boss1.prototype.hitted = function() {
+
+                // The different states of the hero according to his health
+                this.boss1.animations.add('explode1', [0,1], 3, true);
+                this.boss1.animations.add('explode2', [0,1,3], 3, true);
+                this.boss1.animations.add('explode3', [0,1,3,2], 3, true);
+                this.boss1.animations.add('explode4', [0,1,3,2,4], 3, false);
+                var health = this.health -= 1;
+                score += boss1Score;
+                switch (health) {
+                    case 4:
+                        this.boss1.play('explode1');
+                        break;
+                    case 3:
+                        this.boss1.play('explode2');
+                        break;
+                    case 2:
+                        this.boss1.play('explode3');
+                        break;
+                    case 1:
+                        this.boss1.play('explode4');
+                        this.alive = false;
+                        break;
+                    default:
+                        this.boss1.play('explode4');
+                        //this.alive = false;
+                        break;
+                }
+
+            }; // Hero hitted
 
         </script>
     </head>
