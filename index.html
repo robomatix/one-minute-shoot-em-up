@@ -177,7 +177,7 @@ Started the 26 March 2014
                 game.physics.arcade.overlap(bullets, enemyBombs, bulletHitEnemyBullet, null, this);
                 game.physics.arcade.overlap(bullets, enemyBomberRays, bulletHitEnemyBullet, null, this);
                 game.physics.arcade.overlap(bullets, enemyTrackerRayss, bulletHitEnemyBullet, null, this);
-
+                game.physics.arcade.overlap(bullets, enemyBoss1Rays, bulletHitEnemyBullet, null, this);
 
 
                 // Enemies Test and actions
@@ -346,7 +346,9 @@ Started the 26 March 2014
             function bulletHitEnemyBullet(bullet, enemyBullet) {
 
                 bullet.kill();
+                
                 enemyBulletname = enemyBullet.name;
+                
                 switch (enemyBulletname) {
                     case 'enemyBomb':
                         if (enemyBullet.alive) {
@@ -364,7 +366,9 @@ Started the 26 March 2014
                         enemyBullet.kill();
                         score += enemyTrackerRaysScore;
                         break;
-
+                    case 'boss1Ray':
+                        // Nothing happens !!!
+                        break;
                 }
             }// bulletHitEnemyBullet
 
@@ -709,7 +713,7 @@ Started the 26 March 2014
                     {
                         //  And fire it
                         boss1Ray.name = 'boss1Ray';
-                        boss1Ray.reset(this.boss1.x + 20, this.boss1.y + 25);
+                        boss1Ray.reset(this.boss1.x + 4, this.boss1.y + 22);
                         boss1Ray.loadTexture('boss1Ray', 0);
                         boss1Ray.animations.add('blink');
                         boss1Ray.animations.play('blink', 8, true);
