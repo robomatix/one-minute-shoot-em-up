@@ -62,6 +62,7 @@ Started the 26 March 2014
             var fireTrackerRaysTimerDelta = 100;
             var fireTrackerRaysVelocitY = 555;
             var enemyTrackerRaysScore = 5;
+            var boss1Move = 125;
             /******************************
              * 
              * THE GAME
@@ -77,6 +78,7 @@ Started the 26 March 2014
                 game.load.spritesheet('bomberRay', 'assets/picts/enemy-bomber-rays.png', 6, 17, 3);
                 game.load.spritesheet('tracker', 'assets/picts/enemy-tracker-1-and-explode.png', 40, 36, 5);
                 game.load.image('trackerRay', 'assets/picts/enemy-tracker-1-ray.png');
+                game.load.spritesheet('boss1', 'assets/picts/boss-1-explode.png', 120, 90, 5);
 
             }// preload
 
@@ -125,13 +127,16 @@ Started the 26 March 2014
                 //  Create some baddies to have fun with :)
                 enemies = [];
                 // Create Bombers
-                for (var i = 0; i < 3; i++)
+                for (var i = 0; i < 4; i++)
                 {
                     if (i < 2) {
                         enemies.push(new EnemyBomber(game, i));
                     }
                     if (i === 2) {
                         enemies.push(new EnemyTracker(game, i));
+                    }
+                    if (i === 3) {
+                        enemies.push(new boss1(game, i));
                     }
                 }
 
@@ -140,6 +145,8 @@ Started the 26 March 2014
                 enemies[1].bomber.kill();
                 enemies[2].alive = false;
                 enemies[2].tracker.kill();
+                enemies[3].alive = false;
+                enemies[3].boss1.kill();
                 //  The score
                 scoreText = game.add.text(10, 10, scoreString + score, {fontSize: '34px', fill: '#fff'});
             }// create
@@ -166,7 +173,9 @@ Started the 26 March 2014
                         game.physics.arcade.overlap(bullets, enemies[i].bomber, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(bullets, enemies[i].tracker, bulletHitEnemy, null, this);
                         game.physics.arcade.overlap(player.hero, enemies[i].tracker, trackerHitHero, null, this);
+
                         enemies[i].update();
+
                         if (i < 2)
                         {
                             enemies[i].dropsBomb();
@@ -183,14 +192,14 @@ Started the 26 March 2014
 
                     } else {
 
-                        if (i === 0) {
+                        if (i === 0 && level < 4) {
                             var randomGenerateBomber0 = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateBomber0 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 0);
                             }
                         }
 
-                        if (i === 1 && level >= 2) {
+                        if (i === 1 && level >= 2 && level < 4) {
                             var randomGenerateBomber1 = game.rnd.integerInRange(1, 100000);
                             if (randomGenerateBomber1 > 88888) {
                                 enemies[i] = new EnemyBomber(game, 1);
@@ -203,6 +212,10 @@ Started the 26 March 2014
                                 enemies[i] = new EnemyTracker(game, 2);
                             }
                         }
+                        if (i === 3 && level === 4 && !enemies[0].alive && !enemies[1].alive) {
+                            enemies[i] = new boss1(game, 3);
+                        }
+
 
 
                     }
@@ -614,6 +627,51 @@ Started the 26 March 2014
                 }
 
             }; //firesRays
+
+            // BOSS 1
+            boss1 = function(game, id) {
+
+                // var
+                var lr;
+                var y;
+                this.game = game;
+                // Determinate if the bomber appear on the Left or on the Right
+                lr = this.game.rnd.integerInRange(1, 100);
+                // The starting position of the bomber and consquently his moving direction
+                y = 25;
+                if (lr > 50) {
+                    var x = -60;
+                    this.moveX = boss1Move;
+                } else {
+                    var x = 560;
+                    this.moveX = -boss1Move;
+                }
+
+                this.health = 4;
+                this.alive = true;
+                this.fireRayTimer = game.time.now;
+                this.boss1 = game.add.sprite(x, y, 'boss1');
+                this.game.physics.arcade.enable(this.boss1);
+                this.boss1.name = id.toString();
+            }; // Boss1
+
+            boss1.prototype.update = function() {
+
+                var posX = this.boss1.x;
+                
+                alert(posX);
+                
+                // Moves the tracker             
+                if (posX < -60) {
+                    this.moveX = boss1Move;
+                }
+                if (posX > 440) {
+                    this.moveX = -boss1Move;
+                }
+                
+                // Moves
+                this.boss1.body.velocity.x = this.moveX;
+            }; // Boss1 update
 
         </script>
     </head>
